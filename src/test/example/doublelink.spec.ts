@@ -2,7 +2,10 @@ import { expect } from "chai";
 import { describe } from "mocha";
 import { ILink } from "../../app/example/interface/link.i";
 import { DoubleLink } from "../../app/example/link/doublelink";
-
+/**
+ * 双向链表
+ * cmd: npx mocha -r ts-node/register ./src/test/example/doublelink.spec.ts 
+ */
 describe("Double Link", () => {
     it("1 Create", () => {
         const dlink: ILink<string> = new DoubleLink();

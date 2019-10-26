@@ -7,6 +7,7 @@ import { ArrayStack } from "../../app/example/stack/arraystack";
 import { LinkStack } from "../../app/example/stack/linkstack";
 import { Stack } from "../../app/example/stack/stack";
 /**
+ * 栈
  * cmd: npx mocha -r ts-node/register ./src/test/example/stack.spec.ts
  */
 describe("1 Link Stack", () => {

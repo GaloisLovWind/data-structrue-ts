@@ -1,7 +1,10 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
 import { MyArray } from "../../app/example/array";
-
+/**
+ * 数组
+ * cmd: npx mocha -r ts-node/register ./src/test/example/array.spec.ts
+ */
 describe("1 Array ", () => {
     it("1 create ", () => {
         const myArray = new MyArray(10);

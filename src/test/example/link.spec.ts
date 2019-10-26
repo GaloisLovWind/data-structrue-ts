@@ -2,7 +2,10 @@ import { expect } from "chai";
 import { describe } from "mocha";
 import { ILink } from "../../app/example/interface/link.i";
 import { Link } from "../../app/example/link/link";
-
+/**
+ * 链表
+ * cmd:npx mocha -r ts-node/register ./src/test/example/link.spec.ts 
+ */
 describe("1 Link", () => {
     it("1 Create", () => {
         const link: ILink<string> = new Link<string>();

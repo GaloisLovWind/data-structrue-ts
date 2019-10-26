@@ -1,7 +1,9 @@
 import { expect } from "chai";
 import { describe } from "mocha";
 import { Node } from "../../app/example/basic-type/node";
-
+/**
+ * npx mocha -r ts-node/register ./src/test/example/node.spec.ts 
+ */
 describe("1 Node Test", () => {
     it("1 Create ", () => {
         const node: Node<string> = new Node("Galois");
