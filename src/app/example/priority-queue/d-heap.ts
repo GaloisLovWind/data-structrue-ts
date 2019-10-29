@@ -1,22 +1,24 @@
 import { KeyValueNode } from "../basic-type/key-calvalue-node";
 
 /**
- * 二叉堆（最小堆）
- * 由于计算 key 值由 BHeap 不符合设计，
- * 而 C#，Java 中都有具备自带继承基类的计算 hash code值的方法
- * 扩展的方法中，计算key的值比较大小放到 相应的计算传递数据执行
- * key值增加的方法 DecreaseKey, IncreaseKey 增加只是key值，而不改变数据，这才满足优先权的问题，只是改变优先问题，而不改变本身的
+ * d-堆
+ * 二叉堆的推广；实现原理跟二叉堆一样，但是由于每个节点存在 d 个儿子
+ * 即对应的i处的儿子是 d*i - [d / 2] d,d*i - [d / 2] + 1,..., d*i + [d / 2];只需要改变的获取儿子的索引和父子之间的对应关系
+ * 则改变的是上滤和下滤的算法即可
+ * 有些方法可以归结到公共类中， 但由于方便，没有重构
  */
-export class BHeapExt<T> {
+export class DHeap<T>  {
     private capacity: number;
     private size: number;
     private elementArray: Array<KeyValueNode<T>>;
+    private digit: number;
 
-    constructor(capacity: number) {
+    constructor(capacity: number, digit: number) {
         this.capacity = capacity;
         this.elementArray = new Array(this.capacity);
         this.size = 0;
         this.elementArray[0] = null ;
+        this.digit = digit;
     }
 
     public isEmpty(): boolean {
@@ -132,11 +134,10 @@ export class BHeapExt<T> {
         let i: number = index;
         let child: number = 0;
         const temp: KeyValueNode<T> = this.elementArray[i];
-        for (; 2 * i <= this.size; i = child ) {
-            child = 2 * i;
-            if ( child !== this.size && this.elementArray[child + 1] && this.elementArray[child] &&
-                 this.elementArray[child + 1].calValue < this.elementArray[child].calValue) {
-                child++;
+        for (; this.getChildStartIndex(i, this.digit) <= this.size; i = child ) {
+            child = this.getChildStartIndex(i, this.digit);
+            if ( child !== this.size) {
+                child += this.compareChildIncrease(this.elementArray, child, this.digit);
             }
             if (this.elementArray[child] && temp.calValue > this.elementArray[child].calValue) {
                 this.elementArray[i] = this.elementArray[child];
@@ -148,16 +149,63 @@ export class BHeapExt<T> {
     }
     /**
      * 上滤
-     * 由于 泛型中参数没有默认最小值， 则 在索引0处的判断大小需要加限制 Math.floor(i / 2) !== 0
+     * 由于 泛型中参数没有默认最小值， 则 在索引0处的判断大小需要加限制 parentIndex !== 0
      * @param index 需要过滤的位置索引
      */
     private percolateUp(index: number): void {
-        let i: number = index;
+        let i: number = index; // 当前的索引值
         const temp: KeyValueNode<T> = this.elementArray[index];
-        while (Math.floor(i / 2) !== 0 && this.elementArray[Math.floor(i / 2)].calValue > temp.calValue ) {
-            this.elementArray[i] = this.elementArray[Math.floor(i / 2)];
-            i = Math.floor(i / 2);
+        let parentIndex  = this.getParentIndex(i, this.digit);
+        while (parentIndex !== 0) {
+            if (this.elementArray[parentIndex].calValue > temp.calValue ) {
+                this.elementArray[i] = this.elementArray[parentIndex];
+                i = parentIndex;
+                parentIndex =  this.getParentIndex(i, this.digit);
+            } else {
+                break;
+            }
         }
         this.elementArray[i] = temp;
+    }
+    /**
+     * 获取最小儿子节点的索引增长值
+     * @param array 数组
+     * @param childStartIndex 儿子节点的起始位置
+     * @param digit d-堆的标识值
+     */
+    private compareChildIncrease(array: Array<KeyValueNode<T>>, childStartIndex: number, digit: number): number {
+        let minChild: KeyValueNode<T> = array[childStartIndex];
+        let increaseIndex: number = 0;
+        for (let i = 1; i < digit; i++) {
+            if (!minChild || !array[childStartIndex + i]) {
+                break;
+            }
+            if ( minChild.calValue > array[childStartIndex + i].calValue) {
+                minChild = array[childStartIndex + i];
+                increaseIndex = i;
+            }
+        }
+        return increaseIndex;
+    }
+    /**
+     * 获得d-堆的儿子起始索引值
+     * @param parentIndex 父亲节点索引值
+     * @param digit d-堆的标识值
+     */
+    private getChildStartIndex(parentIndex: number, digit: number): number {
+        return parentIndex * digit - digit + 2;
+    }
+    /**
+     * 父节点的索引值
+     * @param childIndex 儿子节点索引值
+     * @param digit  d-堆的标识值
+     */
+    private getParentIndex(childIndex: number, digit: number): number {
+        const index = Math.floor(childIndex / digit);
+        if ( index * digit >= childIndex) {
+            return index;
+        } else {
+            return index + 1;
+        }
     }
 }

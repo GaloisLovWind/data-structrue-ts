@@ -97,7 +97,7 @@ export class BHeap<T> {
         let i: number = index;
         let child: number = 0;
         const temp: T = this.elementArray[i];
-        for (; 2 * index <= this.size; i = child ) {
+        for (; 2 * i <= this.size; i = child ) {
             child = 2 * i;
             // tslint:disable-next-line:max-line-length
             if ( child !== this.size &&  this._calculteHashWithKey(this.elementArray[child + 1]) < this._calculteHashWithKey(this.elementArray[child])) {
